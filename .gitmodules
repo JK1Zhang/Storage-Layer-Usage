@@ -1,0 +1,3 @@
+[submodule "client-go"]
+	path = client-go
+	url = git@github.com:JK1Zhang/client-go.git

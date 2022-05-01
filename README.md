@@ -1,6 +1,20 @@
 # 存储层部署与使用
 
-[TOC]
+
+- [存储层部署与使用](#存储层部署与使用)
+  - [**Part1:TiDB部署**](#part1tidb部署)
+    - [1.软硬件配置需求](#1软硬件配置需求)
+    - [2.在中控机上部署 TiUP 组件](#2在中控机上部署-tiup-组件)
+      - [2.1 执行如下命令安装 TiUP 工具：](#21-执行如下命令安装-tiup-工具)
+      - [2.2 声明全局环境变量](#22-声明全局环境变量)
+      - [2.3 安装 TiUP cluster 组件](#23-安装-tiup-cluster-组件)
+    - [3. 设置集群拓扑并部署](#3-设置集群拓扑并部署)
+      - [3.1 集群拓扑设置](#31-集群拓扑设置)
+      - [3.2 检查集群存在的潜在风险](#32-检查集群存在的潜在风险)
+      - [3.3 部署 TiDB 集群](#33-部署-tidb-集群)
+      - [3.4.  替换TiKV实现](#34--替换tikv实现)
+  - [**Part2: client-go**](#part2-client-go)
+
 
 ## **Part1:TiDB部署**
 
@@ -11,8 +25,6 @@
 [TiDB 软件和硬件环境建议配置 | PingCAP Docs](https://docs.pingcap.com/zh/tidb/stable/hardware-and-software-requirements)
 
 [TiDB 环境与系统配置检查 | PingCAP Docs](https://docs.pingcap.com/zh/tidb/stable/check-before-deployment)
-
-
 
 ### 2.在中控机上部署 TiUP 组件
 

@@ -1,0 +1,141 @@
+# # Global variables are applied to all deployments and used as the default value of
+# # the deployments if a specific deployment value is missing.
+global:
+  user: "to add"
+  ssh_port: 22
+  deploy_dir: "to add"
+  data_dir: "to add"
+
+# # Monitored variables are applied to all the machines.
+monitored:
+  node_exporter_port: 9120
+  blackbox_exporter_port: 9135
+  # deploy_dir: "/tidb-deploy/monitored-9100"
+  # data_dir: "/tidb-data/monitored-9100"
+  # log_dir: "/tidb-deploy/monitored-9100/log"
+
+# # Server configs are used to specify the runtime configuration of TiDB components.
+# # All configuration items can be found in TiDB docs:
+# # - TiDB: https://pingcap.com/docs/stable/reference/configuration/tidb-server/configuration-file/
+# # - TiKV: https://pingcap.com/docs/stable/reference/configuration/tikv-server/configuration-file/
+# # - PD: https://pingcap.com/docs/stable/reference/configuration/pd-server/configuration-file/
+# # All configuration items use points to represent the hierarchy, e.g:
+# #   readpool.storage.use-unified-pool
+# #      
+# # You can overwrite this configuration via the instance-level `config` field.
+
+server_configs:
+  tidb:
+    log.slow-threshold: 300
+    binlog.enable: false
+    binlog.ignore-error: false
+    performance.max-procs: 20
+    prepared-plan-cache.enabled: true
+    tikv-client.max-batch-wait-time: 2000000
+  tikv:
+    # server.grpc-concurrency: 4
+    # raftstore.apply-pool-size: 2
+    # raftstore.store-pool-size: 2
+    # rocksdb.max-sub-compactions: 1
+    storage.block-cache.capacity: "1GB"
+    raftstore.sync-log: false
+    # readpool.unified.max-thread-count: 12
+    readpool.storage.use-unified-pool: false
+    readpool.coprocessor.use-unified-pool: true
+    raftstore.capacity: "80GB"
+    storage.scheduler-worker-pool-size: 5
+    raftstore.store-pool-size: 3
+    raftstore.apply-pool-size: 3
+    rocksdb.max-background-jobs: 8
+    raftdb.max-background-jobs: 4
+    raftdb.allow-concurrent-memtable-write: true
+    #server.request-batch-enable-cross-command: false
+    server.grpc-concurrency: 6
+    #readpool.unifiy-read-pool: true
+    readpool.unified.min-thread-count: 5
+    readpool.unified.max-thread-count: 20
+    readpool.storage.normal-concurrency: 10
+    pessimistic-txn.pipelined: true
+  pd:
+    schedule.leader-schedule-limit: 4
+    schedule.region-schedule-limit: 2048
+    schedule.replica-schedule-limit: 64
+    replication.location-labels: ["zone", "dc", "host"]
+    replication.max-replicas: 3
+
+pd_servers:
+  - host: 127.0.0.1
+    # ssh_port: 22
+    # name: "pd-1"
+    client_port: 2479
+    peer_port: 2480
+    deploy_dir: "***to add***/pd"
+    data_dir: "***to add***/data.pd"
+    # log_dir: "/tidb-deploy/pd-2379/log"
+    # numa_node: "0,1"
+    # # The following configs are used to overwrite the `server_configs.pd` values.
+    # config:
+    #   schedule.max-merge-region-size: 20
+    #   schedule.max-merge-region-keys: 200000
+    #- host: 10.0.1.5
+    #- host: 10.0.1.6
+
+tidb_servers:
+  - host: 127.0.0.1
+    ssh_port: 22
+    port: 4100
+    status_port: 10090
+    deploy_dir: "***to add***/tidb-4100"
+    log_dir: "***to add***/tidb-4100/log"
+    # deploy_dir: "/tidb-deploy/tidb-4000"
+    # log_dir: "/tidb-deploy/tidb-4000/log"
+    # numa_node: "0,1"
+    # # The following configs are used to overwrite the `server_configs.tidb` values.
+    # config:
+    #   log.slow-query-file: tidb-slow-overwrited.log
+  # - host: 10.0.0.55
+  # - host: 10.0.0.54
+
+tikv_servers:
+  - host: 127.0.0.1
+    port: 20372
+    status_port: 20382
+    deploy_dir: "***to add***/tikv"
+    data_dir: "***to add***/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv3" }
+  - host: 127.0.0.1
+    port: 20373
+    status_port: 20383
+    deploy_dir: "***to add***/tikv"
+    data_dir: "***to add***/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv3" }
+  - host: 127.0.0.1
+    port: 20374
+    status_port: 20384
+    deploy_dir: "***to add***/tikv"
+    data_dir: "***to add***/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv4" }
+
+monitoring_servers:
+  - host: 127.0.0.1
+    port: 9170
+    deploy_dir: "***to add***/prometheus"
+    data_dir: "***to add***/data.prometheus"
+    storage_retention: "365d"
+
+grafana_servers:
+  - host: 127.0.0.1
+    port: 3100
+    deploy_dir: "***to add***/grafana"
+
+alertmanager_servers:
+  - host: 127.0.0.1
+    ssh_port: 22
+    web_port: 9193
+    cluster_port: 9194
+    deploy_dir: "***to add***/alertmanager"
+    data_dir: "***to add***/data.alertmanager"
+    # log_dir: "/tidb-deploy/alertmanager-9093/log"

@@ -74,7 +74,7 @@ tiup --binary cluster
 
 >  需要结合具体系统环境与业务需求进行配置,为了方便功能测试开发，这里提供一个经过测试的单机三节点配置文件，修改对应用户后（ssh的用户名）可以直接部署。
 
-
+[TIKV_Deploy_Assets/topology.yaml](./TIKV_Deploy_Assets/topology.yaml)
 
 
 
@@ -117,7 +117,7 @@ tiup cluster start tidb-test
 
 > 此部分待中科大部分后续调优，后续提供脚本支持一键替换，不影响任何接口和上层实现。因此可以先基于上述部署的集群进行开发测试。
 
-
+替换脚本[TIKV_Deploy_Assets/replace_tikv.sh](./TIKV_Deploy_Assets/replace_tikv.sh)
 
 
 

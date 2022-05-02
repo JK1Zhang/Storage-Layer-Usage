@@ -15,11 +15,12 @@
   - [**Part2: client-go**](#part2-client-go)
     - [1. client-go配置](#1-client-go配置)
       - [1.1 client-go下载](#11-client-go下载)
-      - [1.2 leveld的安装配置](#12-leveld的安装配置)
+      - [1.2 leveld的安装配置（为 2.2自定义键值查询功能 所依赖）](#12-leveld的安装配置为-22自定义键值查询功能-所依赖)
     - [2. client-go用法](#2-client-go用法)
       - [2.1 原生client-go用法](#21-原生client-go用法)
       - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
     - [2.3 图存储API用法](#23-图存储api用法)
+  - [**Part3: SQL使用**](#part3-sql使用)
 
 
 
@@ -139,10 +140,12 @@ tiup cluster start tidb-test
 - [client-go 地址（选择 v3.0.5 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
 > 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.5` 下载client-go
 
-#### 1.2 leveld的安装配置
-- 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可
+#### 1.2 leveld的安装配置（为 2.2自定义键值查询功能 所依赖）
+- 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可，路径配置方法见2.2。
+
 
 ### 2. client-go用法
+> 以下API可以参考client-go项目中的example文件夹。注意连接到集群中的PD server对应ip与端口。
 
 #### 2.1 原生client-go用法
 
@@ -203,6 +206,14 @@ tiup cluster start tidb-test
 
 ![ldb.Scan()结果](./picture/scan.png)
 
+
 ### 2.3 图存储API用法
 
 待补充
+
+
+
+
+## **Part3: SQL使用**
+兼容 MySQL(5.6、5.7) 的所有连接器和 API，详情参考。使用时链接到TiDB server与端口。
+https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md

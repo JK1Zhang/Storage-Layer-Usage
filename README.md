@@ -14,6 +14,12 @@
       - [3.3 部署 TiDB 集群](#33-部署-tidb-集群)
       - [3.4.  替换TiKV实现](#34--替换tikv实现)
   - [**Part2: client-go**](#part2-client-go)
+    - [1. client-go配置](#1-client-go配置)
+      - [1.1 client-go下载](#11-client-go下载)
+      - [1.2 leveld的安装配置](#12-leveld的安装配置)
+    - [2. client-go用法](#2-client-go用法)
+      - [2.1 原生client-go用法](#21-原生client-go用法)
+      - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
 
 
 ## **Part1:TiDB部署**
@@ -124,3 +130,74 @@ tiup cluster start tidb-test
 ## **Part2: client-go**
 
 > 通过对原生的client-go进行修改，不仅包含原有的TiKV接口，同时支持包括自定义键值存储、图存储的相关功能。
+
+### 1. client-go配置
+
+#### 1.1 client-go下载
+
+- [client-go 地址（选择 v3.0.5 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
+> 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.5` 下载client-go
+
+#### 1.2 leveld的安装配置
+- 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可
+
+### 2. client-go用法
+
+#### 2.1 原生client-go用法
+
+- [Raw KV API Usage](https://github.com/tikv/client-go/wiki/RawKV-Basic)
+
+#### 2.2 自定义键值查询API用法
+
+- >Custom KV API 用法示例 : [examples](https://github.com/JK1Zhang/client-go/blob/v3/examples/rawkv/rawkv.go)
+- >使用API之前需要配置环境（声明leveldb库等文件的位置），使用前运行 `source env1.sh`配置环境，其中`$dirpath`为leveldb、snappy文件夹所在目录，需要自己更改
+
+- `ldb.LdbLoadLSM(cli, dbName, startkey, endkey, flowIDPart)` 取两个时间戳内的所有数据，并以流 ID 为 key 重新生成键值存储
+    - 时间戳范围为[startkey, endkey]，闭区间
+    - dbName 为leveldb数据库的位置路径，例`"./dbtest1"`
+    - 流 ID 需要指定选择哪些组成元素，给出元素下标
+    - 数据组成如下，时间戳不算在内，比如说下标[3, 7, 8]为`[ipv6.fl, ipv6.dst, ipv6.src]`
+    - `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.fl, ipv6.plen, ipv6.nh, ipv6.hlim, ipv6.dst, ipv6.src, sport, dport]`
+
+```go
+      import (
+        "github.com/JK1Zhang/client-go/v3/ldb"
+      )
+
+      dbName := "./dbTest1"
+      startkey := "1580274000.809441"
+      endkey := "1580274003.012248"
+      flowIDPart := []int{3, 7, 8} //流 ID 由 [ipv6.fl, ipv6.dst, ipv6.src]组成
+      ldb.LdbLoadLSM(cli, dbName, startkey, endkey, flowIDPart)
+```
+
+- `ldb.LdbGet(dbName, key)`  根据流 ID（与上述ID组成一致） 获取对应的 KV 对
+
+```go
+      key := "525394 9e60:10ae:88aa:a676:1023:450b:d646:3079 406c:3fdb:55d5:ba4f:be10:6c78:f45c:674d"
+      val, err := ldb.LdbGet(dbName, key)
+      if err != nil {
+        // ... handle error ...
+        fmt.Printf("get key  from db error\n")
+      }
+```
+> get结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成
+
+![ldb.Get()结果](./picture/get.png)
+
+- `ldb.LdbScan(dbName, startID, endID)` 获取两个流 ID 区间内(字母序)的所有数据
+
+```go
+      startID := "0 cc91:d473:646e:513a:1261:f28a:4a94:3a66 f71c:4fa5:6144:546b:2a63:406f:1d92:a7a0"
+      endID := "525394 9e60:10ae:88aa:a676:1023:450b:d646:3079 406c:3fdb:55d5:ba4f:be10:6c78:f45c:674d"
+
+      keys, vals, err := ldb.LdbScan(dbName, startID, endID)
+      if err != nil {
+        // ... handle error ...
+        fmt.Printf("get key  from db error\n")
+      }
+```
+
+> scan结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成
+
+![ldb.Scan()结果](./picture/scan.png)

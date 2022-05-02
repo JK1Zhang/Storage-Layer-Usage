@@ -1,6 +1,5 @@
 # 存储层部署与使用
 
-
 - [存储层部署与使用](#存储层部署与使用)
   - [**Part1:TiDB部署**](#part1tidb部署)
     - [1.软硬件配置需求](#1软硬件配置需求)
@@ -20,6 +19,8 @@
     - [2. client-go用法](#2-client-go用法)
       - [2.1 原生client-go用法](#21-原生client-go用法)
       - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
+    - [2.3 图存储API用法](#23-图存储api用法)
+
 
 
 ## **Part1:TiDB部署**
@@ -201,3 +202,7 @@ tiup cluster start tidb-test
 > scan结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成
 
 ![ldb.Scan()结果](./picture/scan.png)
+
+### 2.3 图存储API用法
+
+待补充

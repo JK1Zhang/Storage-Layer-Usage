@@ -15,7 +15,8 @@
   - [**Part2: client-go**](#part2-client-go)
     - [1. client-go配置](#1-client-go配置)
       - [1.1 client-go下载](#11-client-go下载)
-      - [1.2 leveld的安装配置（为 2.2自定义键值查询功能 所依赖）](#12-leveld的安装配置为-22自定义键值查询功能-所依赖)
+      - [1.2 leveldb的安装配置（为 2.2自定义键值查询功能 所依赖）](#12-leveldb的安装配置为-22自定义键值查询功能-所依赖)
+      - [1.3 ToCSR的安装配置（为 2.3图存储功能 所依赖）](#13-tocsr的安装配置为-23图存储功能-所依赖)
     - [2. client-go用法](#2-client-go用法)
       - [2.1 原生client-go用法](#21-原生client-go用法)
       - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
@@ -140,9 +141,11 @@ tiup cluster start tidb-test
 - [client-go 地址（选择 v3.0.5 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
 > 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.5` 下载client-go
 
-#### 1.2 leveld的安装配置（为 2.2自定义键值查询功能 所依赖）
+#### 1.2 leveldb的安装配置（为 2.2自定义键值查询功能 所依赖）
 - 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可，路径配置方法见2.2。
 
+#### 1.3 ToCSR的安装配置（为 2.3图存储功能 所依赖）
+- 可执行文件ToCSR即为打包好的程序，下载以后可以直接安装到系统目录下，使用 `sudo install ./ToCSR /usr/local/bin`安装即可，其中./ToCSR 为可执行文见ToCSR的下载位置，可以根据需要替换
 
 ### 2. client-go用法
 > 以下API可以参考client-go项目中的example文件夹。注意连接到集群中的PD server对应ip与端口。
@@ -209,7 +212,8 @@ tiup cluster start tidb-test
 
 ### 2.3 图存储API用法
 
-待补充
+- `ldb.GetGraph(cli, startTime, endTime)`  直接调用上述函数即可在当前工作目录新建CSR文件夹，并将结果文件写到里面。
+  - 上述[startTime，endTime]，代表时间戳的范围，同样是闭区间
 
 
 

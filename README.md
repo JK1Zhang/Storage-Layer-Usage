@@ -138,8 +138,8 @@ tiup cluster start tidb-test
 
 #### 1.1 client-go下载
 
-- [client-go 地址（选择 v3.0.5 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
-> 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.5` 下载client-go
+- [client-go 地址（选择 v3.0.8 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
+> 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.8` 下载client-go
 
 #### 1.2 leveldb的安装配置（为 2.2自定义键值查询功能 所依赖）
 - 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可，路径配置方法见2.2。

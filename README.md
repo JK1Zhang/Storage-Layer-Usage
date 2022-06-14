@@ -122,14 +122,6 @@ tiup cluster display tidb-test
 tiup cluster start tidb-test
 ```
 
-#### 3.4.  替换TiKV实现
-
-> 此部分待中科大部分后续调优，后续提供脚本支持一键替换，不影响任何接口和上层实现。因此可以先基于上述部署的集群进行开发测试。
-
-替换脚本[TIKV_Deploy_Assets/replace_tikv.sh](./TIKV_Deploy_Assets/replace_tikv.sh)
-
-
-
 ## **Part2: client-go**
 
 > 通过对原生的client-go进行修改，不仅包含原有的TiKV接口，同时支持包括自定义键值存储、图存储的相关功能。

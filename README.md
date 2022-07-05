@@ -135,9 +135,14 @@ tiup cluster start tidb-test
 
 安装完成提示初始密码，注意保管，后面调用SQL接口会用到。
 
-![image-20220705160048963](C:\Users\23954\Desktop\net storage mannul\assets\README.assets\image-20220705160048963.png)
-
-
+```shell
++ [ Serial ] - UpdateTopology: cluster=rawkv_cluster
+Started cluster `rawkv_cluster` successfully
+The root password of TiDB database has been changed.
+The new password is: '7G+61v=RtV02z#*4jW'.
+Copy and record it to somewhere safe, it is only displayed once, and will not be stored.
+The generated password can NOT be get and shown again.
+```
 
 
 

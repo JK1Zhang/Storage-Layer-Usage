@@ -11,16 +11,19 @@
       - [3.1 集群拓扑设置](#31-集群拓扑设置)
       - [3.2 检查集群存在的潜在风险](#32-检查集群存在的潜在风险)
       - [3.3 部署 TiDB 集群](#33-部署-tidb-集群)
-      - [3.4.  替换TiKV实现](#34--替换tikv实现)
-  - [**Part2: client-go**](#part2-client-go)
+  - [**Part2: client-go(client-py)**](#part2-client-goclient-py)
     - [1. client-go配置](#1-client-go配置)
       - [1.1 client-go下载](#11-client-go下载)
-      - [1.2 leveldb的安装配置（为 2.2自定义键值查询功能 所依赖）](#12-leveldb的安装配置为-22自定义键值查询功能-所依赖)
-      - [1.3 ToCSR的安装配置（为 2.3图存储功能 所依赖）](#13-tocsr的安装配置为-23图存储功能-所依赖)
-    - [2. client-go用法](#2-client-go用法)
-      - [2.1 原生client-go用法](#21-原生client-go用法)
-      - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
-    - [2.3 图存储API用法](#23-图存储api用法)
+      - [1.2 leveldb的安装配置（为 3.2自定义键值查询功能 所依赖）](#12-leveldb的安装配置为-32自定义键值查询功能-所依赖)
+      - [1.3 ToCSR的安装配置（为 4图存储功能 所依赖）](#13-tocsr的安装配置为-4图存储功能-所依赖)
+    - [2. client-py配置](#2-client-py配置)
+      - [2.1 client-py下载](#21-client-py下载)
+      - [2.2 client-py的安装配置](#22-client-py的安装配置)
+      - [2.3 loadtxt的安装配置](#23-loadtxt的安装配置)
+    - [3. client-go用法](#3-client-go用法)
+      - [3.1 原生client-go用法](#31-原生client-go用法)
+      - [3.2 自定义键值查询API用法](#32-自定义键值查询api用法)
+    - [4 图存储API用法](#4-图存储api用法)
   - [**Part3: SQL使用**](#part3-sql使用)
 
 
@@ -122,7 +125,7 @@ tiup cluster display tidb-test
 tiup cluster start tidb-test
 ```
 
-## **Part2: client-go**
+## **Part2: client-go(client-py)**
 
 > 通过对原生的client-go进行修改，不仅包含原有的TiKV接口，同时支持包括自定义键值存储、图存储的相关功能。
 
@@ -130,45 +133,72 @@ tiup cluster start tidb-test
 
 #### 1.1 client-go下载
 
-- [client-go 地址（选择 v3.0.8 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
-> 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.0.8` 下载client-go
+- [client-go 地址（选择 v3.1.3 之后的版本）](https://github.com/JK1Zhang/client-go/tags)
+  
+> 使用 `go get -u github.com/JK1Zhang/client-go/v3@v3.1.3` 下载client-go
 
-#### 1.2 leveldb的安装配置（为 2.2自定义键值查询功能 所依赖）
-- 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载之后安装到指定目录即可，路径配置方法见2.2。
+#### 1.2 leveldb的安装配置（为 3.2自定义键值查询功能 所依赖）
 
-#### 1.3 ToCSR的安装配置（为 2.3图存储功能 所依赖）
-- 可执行文件ToCSR即为打包好的程序，下载以后可以直接安装到系统目录下，使用 `sudo install ./ToCSR /usr/local/bin`安装即可，其中./ToCSR 为可执行文见ToCSR的下载位置，可以根据需要替换
+- 文件夹leveldb、snappy即为编译好之后的头文件和动态库，下载到用户指定目录即可，路径配置方法见2.2。
 
-### 2. client-go用法
+#### 1.3 ToCSR的安装配置（为 4图存储功能 所依赖）
+
+- 可执行文件ToCSR即为打包好的程序，下载以后可以直接安装到系统目录下，使用 `sudo install ./ToCSR /usr/local/bin`安装即可，其中./ToCSR 为可执行文件ToCSR的下载位置，可以根据需要替换
+
+### 2. client-py配置
+
+#### 2.1 client-py下载
+
+- [client-py 地址](https://github.com/tikv/client-py)
+  
+> 使用 `git clone https://github.com/tikv/client-py.git` 下载client-py
+
+#### 2.2 client-py的安装配置
+
+- 参照[client-py](https://github.com/tikv/client-py) 的`README.md` 中的 `Install (Development)`
+
+```linux
+> pip3 install maturin
+
+> maturin build
+🍹 Building a mixed python/rust project
+🔗 Found pyo3 bindings
+🐍 Found CPython 3.8 at python3.8
+📦 Built source distribution to /home/andy/Code/client-py/target/wheels/tikv_client-0.1.0.tar.gz
+    Blocking waiting for file lock on build directory
+   Compiling pyo3 v0.12.3
+   Compiling tikv-client v0.1.0 (/home/andy/Code/client-py)
+    Finished dev [unoptimized + debuginfo] target(s) in 17.62s
+📦 Built wheel for CPython 3.8 to /home/andy/Code/client-py/target/wheels/tikv_client-0.1.0-cp38-cp38-manylinux1_x86_64.whl
+
+> pip3 install target/wheels/tikv_client-0.1.0-cp38-cp38-manylinux1_x86_64.whl
+Installing collected packages: tikv-client
+Successfully installed tikv-client-0.1.0
+```
+
+#### 2.3 loadtxt的安装配置
+
+- loadtxt.so与loadtxt.h即为打包好的库与头文件，直接下载以后使用即可
+
+### 3. client-go用法
+
 > 以下API可以参考client-go项目中的example文件夹。注意连接到集群中的PD server对应ip与端口。
 
-#### 2.1 原生client-go用法
+#### 3.1 原生client-go用法
 
 - [Raw KV API Usage](https://github.com/tikv/client-go/wiki/RawKV-Basic)
 
-#### 2.2 自定义键值查询API用法
+#### 3.2 自定义键值查询API用法
 
 - >Custom KV API 用法示例 : [examples](https://github.com/JK1Zhang/client-go/blob/v3/examples/rawkv/rawkv.go)
 - >使用API之前需要配置环境（声明leveldb库等文件的位置），使用前运行 `source env1.sh`配置环境，其中`$dirpath`为leveldb、snappy文件夹所在目录，需要自己更改
 
-- `ldb.LdbLoadLSM(cli, dbName, startkey, endkey, flowIDPart)` 取两个时间戳内的所有数据，并以流 ID 为 key 重新生成键值存储
-    - 时间戳范围为[startkey, endkey]，闭区间
-    - dbName 为leveldb数据库的位置路径，例`"./dbtest1"`
-    - 流 ID 需要指定选择哪些组成元素，给出元素下标
-    - 数据组成如下，时间戳不算在内，比如说下标[3, 7, 8]为`[ipv6.fl, ipv6.dst, ipv6.src]`
-    - `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.fl, ipv6.plen, ipv6.nh, ipv6.hlim, ipv6.dst, ipv6.src, sport, dport]`
-
-```go
-      import (
-        "github.com/JK1Zhang/client-go/v3/ldb"
-      )
-
-      dbName := "./dbTest1"
-      startkey := "1580274000.809441"
-      endkey := "1580274003.012248"
-      flowIDPart := []int{3, 7, 8} //流 ID 由 [ipv6.fl, ipv6.dst, ipv6.src]组成
-      ldb.LdbLoadLSM(cli, dbName, startkey, endkey, flowIDPart)
-```
+- `ldb.LdbLoadLSM(cli, dbName, startkey, endkey, IDKeyIpv4, IDKeyIpv6)` 取两个时间戳内的所有数据，并以流 ID 为 key 重新生成键值存储
+  - 时间戳范围为[startkey, endkey]，闭区间
+  - dbName 为leveldb数据库的位置路径，例`"./dbtest1"`
+  - 流 ID 需要指定选择哪些组成元素，给出元素下标
+  - 数据组成如下，时间戳不算在内，比如说ipv6下标[3, 7, 8]为`[ipv6.fl, ipv6.dst, ipv6.src]`，ipv4同理
+  - `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.fl, ipv6.plen, ipv6.nh, ipv6.hlim, ipv6.dst, ipv6.src, sport, dport]`
 
 - `ldb.LdbGet(dbName, key)`  根据流 ID（与上述ID组成一致） 获取对应的 KV 对
 
@@ -180,7 +210,7 @@ tiup cluster start tidb-test
         fmt.Printf("get key  from db error\n")
       }
 ```
-> get结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成
+> get结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成，ipv4同理
 
 ![ldb.Get()结果](./picture/get.png)
 
@@ -197,19 +227,17 @@ tiup cluster start tidb-test
       }
 ```
 
-> scan结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成
+> scan结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成，ipv4同理
 
 ![ldb.Scan()结果](./picture/scan.png)
 
-
-### 2.3 图存储API用法
+### 4 图存储API用法
 
 - `ldb.GetGraph(cli, startTime, endTime)`  直接调用上述函数即可在当前工作目录新建CSR文件夹，并将结果文件写到里面。
   - 上述[startTime，endTime]，代表时间戳的范围，同样是闭区间
 
-
-
-
 ## **Part3: SQL使用**
+
 兼容 MySQL(5.6、5.7) 的所有连接器和 API，详情参考。使用时链接到TiDB server与端口。
+
 https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md

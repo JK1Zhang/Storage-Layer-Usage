@@ -11,7 +11,8 @@
       - [3.1 集群拓扑设置](#31-集群拓扑设置)
       - [3.2 检查集群存在的潜在风险](#32-检查集群存在的潜在风险)
       - [3.3 部署 TiDB 集群](#33-部署-tidb-集群)
-  - [**Part2: client-go(client-py)**](#part2-client-goclient-py)
+      - [3.4 记录初始密码](#34-记录初始密码)
+  - [**Part2: client部署**](#part2-client部署)
     - [1. client-go配置](#1-client-go配置)
       - [1.1 client-go下载](#11-client-go下载)
       - [1.2 leveldb的安装配置（为 3.2自定义键值查询功能 所依赖）](#12-leveldb的安装配置为-32自定义键值查询功能-所依赖)
@@ -19,14 +20,13 @@
     - [2. client-py配置](#2-client-py配置)
       - [2.1 client-py下载](#21-client-py下载)
       - [2.2 client-py的安装配置](#22-client-py的安装配置)
-      - [2.3 loadtxt的安装配置](#23-loadtxt的安装配置)
-    - [3. client-go用法](#3-client-go用法)
-      - [3.1 原生client-go用法](#31-原生client-go用法)
-      - [3.2 自定义键值查询API用法](#32-自定义键值查询api用法)
-    - [4 图存储API用法](#4-图存储api用法)
-  - [**Part3: SQL使用**](#part3-sql使用)
-
-
+  - [**Part3: 使用**（面向上层应用开发，部署跳过）](#part3-使用面向上层应用开发部署跳过)
+    - [1.TiDB使用](#1tidb使用)
+    - [2. client用法](#2-client用法)
+      - [2.1 原生client-go用法](#21-原生client-go用法)
+      - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
+    - [2.3 图存储API用法](#23-图存储api用法)
+    - [3. loadtxt的安装配置](#3-loadtxt的安装配置)
 
 ## **Part1:TiDB部署**
 

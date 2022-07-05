@@ -30,7 +30,9 @@
 
 ## **Part1:TiDB部署**
 
-> 此阶段部署TiDB集群，内部包含TiKV集群和一个SQL Server(TiDB server)。使用时可以绕过TiDB server，直接使用TiKV集群进行键值存储；也可以通过TiDB server实现SQL访问。如同时需要键值存储和SQL存储，建议部署两个TiDB集群分别提供对应功能。
+> 此阶段部署TiDB集群，需要部署两个不同的集群，这两个数据库分别应用原生键值应用和SQL应用。
+
+
 
 ### 1.软硬件配置需求
 
@@ -38,9 +40,11 @@
 
 [TiDB 环境与系统配置检查 | PingCAP Docs](https://docs.pingcap.com/zh/tidb/stable/check-before-deployment)
 
+
+
 ### 2.在中控机上部署 TiUP 组件
 
->  TiUP 组件是集群部署与管理工具。
+>  TiUP 组件是集群部署与管理工具，tiup只需要安装一次。
 
 #### 2.1 执行如下命令安装 TiUP 工具：
 
@@ -84,7 +88,7 @@ tiup --binary cluster
 
 #### 3.1 集群拓扑设置
 
->  需要结合具体系统环境与业务需求进行配置,为了方便功能测试开发，这里提供一个经过测试的单机三节点配置文件，修改对应用户后（ssh的用户名）可以直接部署。
+>  需要结合具体系统环境与业务需求进行配置, 为了方便功能测试开发，这里提供一个经过测试的单机三节点配置文件，修改对应用户后可以直接部署。
 
 [TIKV_Deploy_Assets/topology.yaml](./TIKV_Deploy_Assets/topology.yaml)
 
@@ -104,6 +108,8 @@ tiup cluster check ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
 tiup cluster check ./topology.yaml --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
 ```
 
+
+
 #### 3.3 部署 TiDB 集群
 
 ```shell
@@ -111,7 +117,7 @@ tiup cluster deploy tidb-test v5.4.0 ./topology.yaml --user root [-p] [-i /home/
 ```
 
 > - `tidb-test` 为部署的集群名称。
-> - `v5.4.0` 为部署的集群版本，可以通过执行 `tiup list tidb` 来查看 TiUP 支持的最新可用版本
+> - `v5.4.0` 为部署的集群版本，可以通过执行 `tiup list tidb` 来查看 TiUP 支持的最新可用版本，推荐使用v5.4.0。
 
 执行如下命令检查 `tidb-test` 集群情况：
 
@@ -125,9 +131,19 @@ tiup cluster display tidb-test
 tiup cluster start tidb-test
 ```
 
-## **Part2: client-go(client-py)**
+#### 3.4 记录初始密码
 
-> 通过对原生的client-go进行修改，不仅包含原有的TiKV接口，同时支持包括自定义键值存储、图存储的相关功能。
+安装完成提示初始密码，注意保管，后面调用SQL接口会用到。
+
+![image-20220705160048963](C:\Users\23954\Desktop\net storage mannul\assets\README.assets\image-20220705160048963.png)
+
+
+
+
+
+## **Part2: client部署**
+
+> 通过对原生的client进行修改，对tidb接口进行二次封装，向上层应用提供接口，不仅包含原有的TiKV接口，同时支持包括自定义键值存储、图存储的相关功能。
 
 ### 1. client-go配置
 
@@ -150,7 +166,6 @@ tiup cluster start tidb-test
 #### 2.1 client-py下载
 
 - [client-py 地址](https://github.com/tikv/client-py)
-  
 > 使用 `git clone https://github.com/tikv/client-py.git` 下载client-py
 
 #### 2.2 client-py的安装配置
@@ -176,24 +191,36 @@ Installing collected packages: tikv-client
 Successfully installed tikv-client-0.1.0
 ```
 
-#### 2.3 loadtxt的安装配置
 
-- loadtxt.so与loadtxt.h即为打包好的库与头文件，直接下载以后使用即可
 
-### 3. client-go用法
+## **Part3: 使用**（面向上层应用开发，部署跳过）
+
+### 1.TiDB使用
+
+> TiDB内部包含TiKV集群和一个SQL Server(TiDB server)。使用时可以绕过TiDB server，直接使用TiKV集群进行键值存储；也可以通过TiDB server实现SQL访问。如同时需要键值存储和SQL存储，建议部署两个TiDB集群分别提供对应功能。
+
+兼容 MySQL(5.6、5.7) 的所有连接器和 API，详情参考。使用时链接到TiDB server与端口。
+
+https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md
+
+
+
+### 2. client用法
 
 > 以下API可以参考client-go项目中的example文件夹。注意连接到集群中的PD server对应ip与端口。
 
-#### 3.1 原生client-go用法
+#### 2.1 原生client-go用法
 
 - [Raw KV API Usage](https://github.com/tikv/client-go/wiki/RawKV-Basic)
 
-#### 3.2 自定义键值查询API用法
+#### 2.2 自定义键值查询API用法
 
 - >Custom KV API 用法示例 : [examples](https://github.com/JK1Zhang/client-go/blob/v3/examples/rawkv/rawkv.go)
+
 - >使用API之前需要配置环境（声明leveldb库等文件的位置），使用前运行 `source env1.sh`配置环境，其中`$dirpath`为leveldb、snappy文件夹所在目录，需要自己更改
 
 - `ldb.LdbLoadLSM(cli, dbName, startkey, endkey, IDKeyIpv4, IDKeyIpv6)` 取两个时间戳内的所有数据，并以流 ID 为 key 重新生成键值存储
+
   - 时间戳范围为[startkey, endkey]，闭区间
   - dbName 为leveldb数据库的位置路径，例`"./dbtest1"`
   - 流 ID 需要指定选择哪些组成元素，给出元素下标
@@ -210,6 +237,7 @@ Successfully installed tikv-client-0.1.0
         fmt.Printf("get key  from db error\n")
       }
 ```
+
 > get结果如下，key `[ipv6.fl, ipv6.dst, ipv6.src]` 为选择的元素按照上述顺序以空格分隔组成，value `[Timestamp, ether.dst, ether.src, ipv6.tc, ipv6.plen, ipv6.nh, ipv6.hlim, sport, dport]`为余下元素按照顺序以空格分隔组成，ipv4同理
 
 ![ldb.Get()结果](./picture/get.png)
@@ -231,13 +259,12 @@ Successfully installed tikv-client-0.1.0
 
 ![ldb.Scan()结果](./picture/scan.png)
 
-### 4 图存储API用法
+### 2.3 图存储API用法
 
 - `ldb.GetGraph(cli, startTime, endTime)`  直接调用上述函数即可在当前工作目录新建CSR文件夹，并将结果文件写到里面。
   - 上述[startTime，endTime]，代表时间戳的范围，同样是闭区间
+  - 
 
-## **Part3: SQL使用**
+### 3. loadtxt的安装配置
 
-兼容 MySQL(5.6、5.7) 的所有连接器和 API，详情参考。使用时链接到TiDB server与端口。
-
-https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md
+- loadtxt.so与loadtxt.h即为打包好的库与头文件，直接下载以后使用即可，根据

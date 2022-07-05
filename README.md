@@ -30,7 +30,7 @@
 
 ## **Part1:TiDB部署**
 
-> 此阶段部署TiDB集群，需要部署两个不同的集群，这两个数据库分别应用原生键值应用和SQL应用。
+> 此阶段部署TiDB集群，需要部署两个不同的集群，这两个数据库分别应用原生键值应用和SQL应用。二者部署流程一致。
 
 
 
@@ -133,13 +133,13 @@ tiup cluster start tidb-test
 
 #### 3.4 记录初始密码
 
-安装完成提示初始密码，注意保管，后面调用SQL接口会用到。
+安装完成提示初始密码，注意保管，后面调用SQL接口会用到。提示信息类似下方所示
 
 ```shell
 + [ Serial ] - UpdateTopology: cluster=rawkv_cluster
 Started cluster `rawkv_cluster` successfully
 The root password of TiDB database has been changed.
-The new password is: '7G+61v=RtV02z#*4jW'.
+The new password is: 'xxxxxxxxxxx'.
 Copy and record it to somewhere safe, it is only displayed once, and will not be stored.
 The generated password can NOT be get and shown again.
 ```

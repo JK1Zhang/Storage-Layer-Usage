@@ -22,11 +22,11 @@
       - [2.2 client-py的安装配置](#22-client-py的安装配置)
   - [**Part3: 使用**（面向上层应用开发，部署跳过）](#part3-使用面向上层应用开发部署跳过)
     - [1.TiDB使用](#1tidb使用)
-    - [2. client用法](#2-client用法)
-      - [2.1 原生client-go用法](#21-原生client-go用法)
-      - [2.2 自定义键值查询API用法](#22-自定义键值查询api用法)
-    - [2.3 图存储API用法](#23-图存储api用法)
-    - [3. loadtxt的安装配置](#3-loadtxt的安装配置)
+    - [2. loadtxt的安装配置](#2-loadtxt的安装配置)
+    - [3. API语法](#3-api语法)
+      - [3.1 原生client-go用法](#31-原生client-go用法)
+      - [3.2 自定义键值查询API用法](#32-自定义键值查询api用法)
+      - [3.3 图存储API用法](#33-图存储api用法)
 
 ## **Part1:TiDB部署**
 
@@ -96,7 +96,7 @@ tiup --binary cluster
 
 #### 3.2 检查集群存在的潜在风险
 
-> -- user参数需要与拓扑配置文件中保持一致，并保证不同节点间此用户的ssh连接。
+> -- user参数需要与拓扑配置文件中保持一致，并保证不同节点间的ssh连接。
 
 ```sh
 tiup cluster check ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
@@ -210,15 +210,20 @@ https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md
 
 
 
-### 2. client用法
+### 2. loadtxt的安装配置
+
+- loadtxt.so与loadtxt.h即为打包好的库与头文件，直接下载以后使用即可。
+  
+
+### 3. API语法
 
 > 以下API可以参考client-go项目中的example文件夹。注意连接到集群中的PD server对应ip与端口。
 
-#### 2.1 原生client-go用法
+#### 3.1 原生client-go用法
 
 - [Raw KV API Usage](https://github.com/tikv/client-go/wiki/RawKV-Basic)
 
-#### 2.2 自定义键值查询API用法
+#### 3.2 自定义键值查询API用法
 
 - >Custom KV API 用法示例 : [examples](https://github.com/JK1Zhang/client-go/blob/v3/examples/rawkv/rawkv.go)
 
@@ -264,12 +269,9 @@ https://www.mianshigee.com/tutorial/pingcap-docs-cn/sql-connection-and-APIs.md
 
 ![ldb.Scan()结果](./picture/scan.png)
 
-### 2.3 图存储API用法
+#### 3.3 图存储API用法
 
 - `ldb.GetGraph(cli, startTime, endTime)`  直接调用上述函数即可在当前工作目录新建CSR文件夹，并将结果文件写到里面。
   - 上述[startTime，endTime]，代表时间戳的范围，同样是闭区间
   - 
 
-### 3. loadtxt的安装配置
-
-- loadtxt.so与loadtxt.h即为打包好的库与头文件，直接下载以后使用即可，根据
